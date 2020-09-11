@@ -1,0 +1,454 @@
+\documentclass[letterpaper,11pt]{article}
+% Soporte para los acentos.
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}  
+\usepackage{amssymb}   
+\usepackage{amsthm}  
+% Idioma español.
+\usepackage[spanish,mexico, es-tabla]{babel}
+% Modificamos los márgenes del documento.
+\usepackage[lmargin=2cm,rmargin=2cm,top=2cm,bottom=2cm]{geometry}
+
+\title{Facultad de Ciencias, UNAM \\
+       Programación Declarativa \\ 
+       Tarea 2: The Imperative is Dark and Full of Terrors}
+\author{Rubí Rojas Tania Michelle}
+\date{24 de febrero de 2020}
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+    % Ejercicio 1.
+    \item Demuestra las siguientes propiedades
+    \begin{itemize}
+        % Ejercicio 1.1
+        \item sum . map double $=$ double . sum
+        \begin{proof} 
+            Inducción estructural sobre $xs$. 
+            \begin{itemize}
+                \item Caso base. \\ 
+                $xs = []$. Este caso se cumple ya que 
+                \begin{align*}
+                    (sum \; . \; map \; double) \; []
+                    &= sum \; (map \; double \; []) \\
+                    &= sum \; []
+                    && \text{def. de map} \\ 
+                    &= 0
+                    && \text{def. de sum} \\ 
+                    &= 2 * 0
+                    && \text{aritmética} \\ 
+                    &= double \; 0
+                    && \text{def. de double} \\ 
+                    &= double \; (sum \; [])
+                    && \text{def. de sum} \\ 
+                    &= (double \; . \; sum) \; []
+                \end{align*}
+
+                \item Hipótesis de inducción.
+                \begin{center}
+                    sum . map double $=$ double . sum
+                \end{center}
+
+                \item Paso inductivo.
+                \begin{align*}
+                    (sum \; . \; map \; double) \; (x:xs)
+                    &= sum \; (map \; double \; (x:xs)) \\ 
+                    &= sum \; (double \; x \; : \; map \; double \; xs)
+                    && \text{def. de map} \\
+                    &= double \; x + sum \; (map \; double \; xs)
+                    && \text{def. de sum} \\ 
+                    &= double \; x + double \; (sum \; xs)
+                    && \text{hipótesis de inducción} \\ 
+                    &= 2 * x + 2 * (sum \; xs)
+                    && \text{def. de double} \\ 
+                    &= 2 * (x + sum \; xs)
+                    && \text{distributividad} \\ 
+                    &= double \; (x + sum \; xs)
+                    && \text{def. de double} \\ 
+                    &= double \; (sum \; (x:xs))
+                    && \text{def. de sum} \\ 
+                    &= (double \; . \; sum) \; (x:xs)
+                \end{align*}
+            \end{itemize}
+        \end{proof}
+
+        \newpage
+        % Ejercicio 1.2
+        \item sum . map sum $=$ sum . concat
+        \begin{proof}
+            Inducción estructural sobre $xs$.
+            \begin{itemize}
+                \item Caso base. \\ 
+                $xs = []$. Este caso se cumple ya que 
+                \begin{align*}
+                    (sum \; . \; map \; sum) \; [] 
+                    &= sum \; (map \; sum \; []) \\
+                    &= sum \; []
+                    && \text{def. de map} \\
+                    &= sum \; (concat \; [])
+                    && \text{def. de concat} \\ 
+                    &= (sum \; . \; concat) \; []
+                \end{align*}
+
+                \item Hipótesis de inducción.
+                \begin{center}
+                    sum . map sum $=$ sum . concat
+                \end{center}
+
+                \item Paso inductivo.
+                \begin{align*}
+                    (sum \; . \; map \; sum) \; (x:xs)
+                    &= sum \; (map \; sum \; (x:xs)) \\
+                    &= sum \; (sum \; x \; : \; map \; sum \; xs) \\
+                    &= sum \; x + sum \; (map \; sum \; xs)
+                    && \text{def. de sum} \\ 
+                    &= sum \; x + sum \; (concat \; xs)
+                    && \text{hipótesis de inducción} \\ 
+                    &= sum \; (x \; ++ \; concat \; xs)
+                    && \text{propiedad de sum} \\ 
+                    &= sum \; (concat (x:xs))
+                    && \text{def. de concat} \\ 
+                    &= (sum \; . \; concat) \; (x:xs)
+                \end{align*}
+            \end{itemize}
+        \end{proof}
+
+        % Ejercicio 1.3
+        \item sum . sort $=$ sum
+        \begin{proof}
+            Inducción fuerte sobre la longitud de la lista.
+            \begin{itemize}
+                \item Caso base. \\ 
+                $length \; xs = 0$. Esto quiere decir que la lista es vacía,
+                por lo que este caso se cumple pues 
+                \begin{align*}
+                    (sum \; . \; sort) \; [] 
+                    &= sum \; (sort \; []) \\ 
+                    &= sum \; []
+                    && \text{def. de sort} 
+                \end{align*}
+
+                \item Hipótesis de inducción. \\
+                Supongamos que se cumple para todas las listas de longitud 
+                menor a (x:xs).
+
+                \item Paso inductivo.
+                Notemos que la conmutatatividad de la suma hace que esto funcione.
+                Sea {sort = quickSort}, entonces 
+                \begin{align*}
+                    (sum \; . \; sort) \; (x:xs)
+                    &= sum \; (sort \; (x:xs)) \\
+                    &= sum \; (sort \; (menorPrivote) \; ++ \; [x] \; \\ 
+                    &\; ++ \; sort \; (mayorIgualPivote))
+                    && \text{def. de quickSort} \\ 
+                    &= sum \; (sort \; (menorPrivote)) \; + \; sum \; [x] \\
+                    &\; ++ \; sum(sort (mayorIgualPivote)) 
+                    && \textit{prop. de sum} \\ 
+                    &= sum \; (menorPrivote) \; + \; sum \; [x] \; + \\
+                    &\; sum (mayorIgualPivote)
+                    && \text{H.I.} \\ 
+                    &= sum (menorPrivote \; ++ \; [x] \; ++ \; mayorIgualPivote)
+                    && \text{prop. de sum} \\
+                    &= sum (x \; : menorPrivote \; ++ \; mayorIgualPivote)
+                    && \text{prop. de $++$} \\ 
+                    &= sum (x:xs)
+                    && \text{def. de $++$}
+                \end{align*}
+            \end{itemize}
+        \end{proof}
+    \end{itemize}
+
+    \newpage
+    % Ejercicio 2.
+    \item Demuestra o da un contraejemplo de cada una de las siguientes 
+    propiedades.
+    \begin{itemize}
+        % Ejercicio 2.1
+        \item take n xs $++$ drop n xs $=$ xs
+        \begin{proof}
+            Inducción sobre $n$.
+            \begin{itemize}
+                \item Caso base. \\ 
+                $n = 0$. Este caso se cumple ya que 
+                \begin{align*}
+                    take \; 0 \; xs \; ++ \; drop \; 0 \; xs
+                    &= [] ++ \; xs
+                    && \text{def. de take y drop} \\ 
+                    &= xs
+                    && \text{def. de $++$}
+                \end{align*}
+
+                \item Hipótesis de inducción.
+                \begin{center}
+                    take n xs $++$ drop n xs $=$ xs
+                \end{center}
+
+                \item Paso inductivo. \\ 
+                Tenemos dos casos
+                \begin{itemize}
+                    \item[i)] $n = n + 1 \land xs = []$
+                    \begin{align*}
+                        take \; (n+1) \; [] \; ++ \; drop \; (n+1) \; []
+                        &= [] ++ \; []
+                        && \text{def. de take y drop} \\
+                        &= []
+                        && \text{def. de $++$} 
+                    \end{align*}
+
+                    \item[ii)] $n = n + 1 \land xs = (x:xs)$ 
+                    \begin{align*}
+                        take \; (n+1) \; (x:xs) \; ++ \; drop \; (n+1) \; (x:xs)
+                        &= (x \; : \; take \; n \; xs) \; 
+                           ++ \; (drop \; n\; xs) \\
+                        &= x \; : \; ((take \; n \; xs) \; 
+                        ++ \; (drop \; n \; xs)) \\ 
+                        &= (x:xs)
+                    \end{align*}
+                \end{itemize}
+            \end{itemize}    
+        \end{proof}
+
+        % Ejercicio 2.2
+        \item take m . take n $=$ take (min m n)
+        \begin{proof}
+            Sin pérdida de generalidad, asumimos que $m, n \geq 0$. \\ 
+            Inducción sobre $m$.
+            \begin{itemize}
+                \item Caso base. \\ 
+                $m = 0$. Este caso se cumple ya que 
+                \begin{align*}
+                    (take \; 0 \; . \; take \; n) \; xs
+                    &= take \; 0 \; (take \; n \; xs) \\
+                    &= [] 
+                    && \text{def. de take} \\
+                    &= take \; 0 \; xs 
+                    && \text{def. de take} \\ 
+                    &= take \; (min \; 0 \; n) \; xs 
+                    && \text{def. de min} \\ 
+                    &= (take \; (min \; 0 \; n)) \; xs
+                \end{align*}
+
+                \item Hipótesis de inducción.
+                \begin{center}
+                    take m . take n $=$ take (min m n)
+                \end{center}
+                
+                \item Paso inductivo. \\ 
+                Tenemos dos casos 
+                \begin{itemize}
+                    \item[i)] $m = m+1 \land xs = []$
+                    \begin{align*}
+                        (take \; (m+1) \; . \; take \; n) \; []
+                        &= take \; (m+1) \; (take \; n \; []) \\ 
+                        &= take \; (m+1) \; []
+                        && \text{def. de take} \\ 
+                        &= []
+                        && \text{def. de take} \\
+                        &= take \; (min \; (m+1) \; n) \; []
+                        && \text{def. de take} \\ 
+                        &= (take \; (min \; (m+1) \; n)) \; []
+                    \end{align*}
+
+                    \item[ii)] $n = n+1 \land xs = (x:xs)$ \\ 
+                    Recordemos que \textit{min (x y) = min ((x+1) (y+1))}, 
+                    es decir, el mínimo seguirá siendo el mínimo si es que 
+                    a los números $x, y$ se les suma una unidad.
+                    \begin{align*}
+                        (take \; (m+1) \; . \; take \; n) \; (x:xs)
+                        &= take \; (m+1) \; (take \; n \; (x:xs)) \\
+                        &= take \; (m+1) \; (x \; : \; take \; (n-1) \; xs)
+                        && \text{def. de take} \\
+                        &= x \; : \; take \; m \; (take \; (n-1) \; xs)
+                        && \text{def. de take} \\
+                        &= x \; : \; take \; (min \; m \; (n-1)) \; xs 
+                        && \text{H. I.} \\
+                        &= take \; (min \; (m+1) \; n) \; (x:xs)
+                        && \text{def. de take} \\ 
+                        &= (take \; (min \; (m+1) \; n)) \; (x:xs)
+                    \end{align*}
+                \end{itemize}
+            \end{itemize}    
+        \end{proof}
+
+        % Ejercicio 2.3
+        \item map f . take n $=$ take n . map f
+        \begin{proof}
+            Inducción sobre $n$. 
+            \begin{itemize}
+                \item Caso base. \\ 
+                $n = 0$. Este caso se cumple ya que 
+                \begin{align*}
+                    (map \; . \; take \; 0) \; xs 
+                    &= map \; f \; (take \; 0 \; xs) \\ 
+                    &= map \; f \; []
+                    && \text{def. de take} \\ 
+                    &= []
+                    && \text{def. de map} \\ 
+                    &= take \; 0 \; (map \; f \; xs)
+                    && \text{def. de take} \\ 
+                    &= (take \; 0 \; . \; map \; f) \; xs 
+                \end{align*}
+
+                \item Hipótesis de inducción.
+                \begin{center}
+                    map f . take n $=$ take n . map f
+                \end{center}
+
+                \item Paso inductivo. Tenemos dos casos
+                \begin{itemize}
+                    \item[i)] $n = n+1 \land xs = []$
+                    \begin{align*}
+                        (map \; . \; take \; (n+1)) \; []
+                        &= map \; f \; (take \; (n+1) \; []) \\
+                        &= map \; f \; []
+                        && \text{def. de take} \\ 
+                        &= []
+                        && \text{def. de map} \\ 
+                        &= take \; (n+1) \; []
+                        && \text{def. de take} \\ 
+                        &= take \; (n+1) \; (map \; f \; [])
+                        && \text{def. de map} \\ 
+                        &= (take \; (n+1) \; . \; map \; f) \; []
+                    \end{align*}
+
+                    \item[ii)] $n = n + 1 \land xs = (x:xs)$ 
+                    \begin{align*}
+                        (map \; . \; take \; (n+1)) \; (x:xs) 
+                        &= map \; f \; (take \; (n+1) \; (x:xs)) \\
+                        &= map \; f \; (x \; : \; take \; n \; xs)
+                        && \text{def. de take} \\ 
+                        &= f \; x \; : \; map \; f \; (take \; n \; xs)
+                        && \text{def. de map} \\ 
+                        &= f \; x \; : \; take \; n \; (map \; f \; xs)
+                        && \text{hipótesis de inducción} \\ 
+                        &= take \; (n+1) \; (f \; x \; : \; map \; f \; xs)
+                        && \text{def. de take} \\ 
+                        &= take \; (n+1) \; (map \; f \; (x:xs))
+                        && \text{def. de map} \\ 
+                        &= (take \; (n+1) \; . \; map \; f) \; (x:xs)
+                    \end{align*}
+                \end{itemize}
+            \end{itemize}
+        \end{proof}
+
+        % Ejercicio 2.4
+        \item filter p . concat $=$ concat . map (filter p)
+        \begin{proof}
+            Inducción sobre $xs$.
+            \begin{itemize}
+                \item Caso base. \\ 
+                $xs = []$. Este caso se cumple ya que 
+                \begin{align*}
+                    (filter \; p \; . \; concat) \; [] 
+                    &= filter \; p \; (concat \; []) \\ 
+                    &= filter \; p \; []
+                    && \text{def. de concat} \\ 
+                    &= []
+                    && \text{def. de filter} \\ 
+                    &= concat \; []
+                    && \text{def. de concat} \\ 
+                    &= concat \; (map \; (filter \; p) \; [])
+                    && \text{def. de map} \\  
+                    &= (concat \; . \; map \; (filter \; p)) \; []
+                \end{align*}
+
+                \item Hipótesis de inducción.
+                \begin{center}
+                    filter p . concat $=$ concat . map (filter p)
+                \end{center}
+
+                \item Paso inductivo.
+                \begin{align*}
+                    (filter \; p \; . \; concat) \; (x:xs)
+                    &= filter \; p \; (concat \; (x:xs)) \\ 
+                    &= filter \; p \; (x \; ++ \; concat \; xs)
+                    && \text{def. de concat} \\
+                    &= (filter \; p) \; x \; ++ \; filter \; p \; (concat \; xs) 
+                    && \text{distributividad} \\  
+                    &= (filter \; p) \; x \; ++ \; concat \; (map \; (filter \; p) \; xs) 
+                    && \text{hipótesis de inducción} \\ 
+                    &= concat \; ((filter \; p) \; x \; : \; map \; (filter \; p) \; xs)
+                    && \text{def. de concat} \\
+                    &= concat \; (map \; (filter \; p) \; (x:xs))
+                    && \text{def. de map} \\
+                    &= (concat \; . \; map \; (filter \; p)) \; (x:xs)
+                \end{align*}
+            \end{itemize}
+        \end{proof}
+    \end{itemize}
+
+    % Ejercicio 3.
+    \item Consideremos la siguiente afirmación
+    \begin{center}
+        map (f . g) xs $=$ map f $\$$ map g xs
+    \end{center}
+
+    \begin{itemize}
+        % Ejercicio 3.a
+        \item[(a)] ¿Se cumple para cualquier $xs$? Si es cierta bosqueja la 
+        demostración, en caso contrario, ¿qué condiciones se deben pedir sobre
+        $xs$ para que sea cierta?
+
+        \textsc{Solución:} Sí, se cumple para cualquier lista $xs$.
+        Para justificarlo, demostraremos la propiedad usando inducción 
+        estructural.
+
+        \begin{proof}
+            Inducción estructural sobre $xs$.
+            \begin{itemize}
+                \item Caso base.
+                $xs = []$. Este caso se cumple ya que 
+                \begin{align*}
+                    map \; (f \; . \; g) \; []
+                    &= []
+                    && \text{def. de map} \\ 
+                    &= map \; f \; []
+                    && \text{def. de map} \\ 
+                    &= map \; f \; \$ \; map \; g \; []
+                \end{align*}
+
+                \item Hipótesis de inducción.
+                \begin{center}
+                    map (f . g) xs $=$ map f $\$$ map g xs
+                \end{center}
+
+                \item Paso inductivo.
+                \begin{align*}
+                    map \; (f \; . \; g) \; (x:xs)
+                    &= (f \; . \; g) \; x \; : \; map \; (f \; . \; g) \; xs
+                    && \text{def. de map} \\ 
+                    &= (f \; . \; g) \; x \; : \; map \; f \; \$ \; map \; g \; xs
+                    && \text{hipótesis de inducción} \\
+                    &= f \; (g \; x) \; : \;   map \; f \; \$ \; map \; g \; xs
+                    && \text{def. de composición} \\
+                    &= map \; f \; \$ \; g \; x \; : \; map \; g \; xs 
+                    && \text{def. de map} \\
+                    &= map \; f \; \$ \; map \; g \; (x:xs)
+                    && \text{def. de map}
+                \end{align*}
+            \end{itemize}
+        \end{proof}
+
+        % Ejercicio 3.b
+        \item[(b)] Intuitivamente, ¿qué lado de la desigualdad resulta más 
+        eficiente? ¿Esto es cierto incluso en lenguajes con evaluación perezosa? 
+        Justifica ambas respuestas.
+
+        \textsc{Solución:} La expresión \textbf{map f $\$$ map g xs} hace dos 
+        recorridos a la lista $xs$ al momento de ejecutarse (un recorrido 
+        por cada función \textbf{map}), mientras que \textbf{map (f . g) xs}
+        hace un sólo recorrido de la lista $xs$, el cual es realizado por 
+        nuestra única función \textbf{map}. Es decir, \textbf{map (f . g) xs}
+        hace la \textit{optimización} de reemplazar dos recorridos de la lista 
+        $xs$ por uno solo.
+
+        Esto es cierto incluso para lenguajes con evaluación perezosa ya que 
+        en ambos casos debemos evaluar todos los valores de la lista, pues 
+        es necesario gracias a la aplicación de la función \textbf{map}. 
+        Así que si podemos evitar recorrer la lista más de una vez, es 
+        mejor para nosotros (y nuestra complejidad en espacio).
+    \end{itemize}
+\end{enumerate}
+\end{document}

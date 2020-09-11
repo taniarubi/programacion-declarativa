@@ -26,17 +26,6 @@ Criptoaritmos
    donde se muestra una de las soluciones al problema (el programa genera 
    más, pero por simplicidad sólo se muestra una).
 
-
-DuckDuck
-1. Para ejecutar el programa, primero debemos colocarnos en la carpeta donde se
-   encuentra el archivo patos.hs
-   Una vez hecho esto, ingresamos en la terminal los siguientes comandos
-   $ ghci
-   $ :l patos.hs 
-2. Una vez hecho esto, para poder obtener la solución al problema, debemos 
-   realizar lo siguiente:
-   Por ejemplo, si tenemos el 
-
 Cántaros
 1. Para ejecutar el programa, primero debemos colocarnos en la carpeta donde se
    encuentra el archivo cantaros.pl
